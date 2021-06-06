@@ -1,0 +1,221 @@
+@startuml
+
+
+skinparam componentStyle uml2
+
+class Scooter {
+  .. Constructor ..
+  (id, position, registeredarea, licenseplate, status, battery, registeredmaintenancedepartment)
+
+  .. Getter ..
+  + getId() : int
+  + getState() : Status
+  + getBatteryInfo() : int
+  + getPosition() : Coordinate
+  + getRegisteredArea() : Area
+  + getNumberOfScooters() : int
+  + getLicensePlate() : String
+  + getRegisteredMaintenanceDepartment() : MaintenanceDepartment
+
+  .. Setter ..
+  + setState(status)
+  + setBattery(int)
+  + setPosition(coordinate)
+  + setLicensePlate(string)
+  + setLowbattery(int)
+  + setRegisteredArea(area)
+  + setRegisteredMaintenanceDepartment(MaintenanceDepartment)
+
+  .. Methods ..
+  + drive(Customer) : void
+  + park() : void
+  + charge() : void
+  + requestLicensePlate() : void
+  + isInRegisteredArea() : bool
+  + toString() : string
+  + genChars() : string
+  + genRandomNumber(min, max) : int
+
+  __ public data __
+  -LinkedList<Scooter> scooterlist
+
+  __ private data __
+  - customer inusebydriver
+  - area registeredarea
+  - coordinate position
+  - int id
+  - status state
+  - int battery
+  - string licenseplate
+  - int numberofscooters
+  - maintenanceDepartment registeredmaintenancedepartment
+  - int lowbattery
+}
+
+class Area {
+  .. Constructor ..
+  (areaname, ndegree1, ndegree2, edegree1, edegree2)
+
+  .. Getter ..
+  + getAreaName() : string
+
+  .. Setter ..
+
+  .. Methods ..
+  + isInArea(coordinate) : bool
+
+  __ private data __
+  -String areaname
+  -float ndegree1
+  -float ndegree2
+  -float edegree1
+  -float edegree2
+}
+
+class Coordinate {
+  .. Constructor ..
+  (ndegree, edegree)
+
+  __ public data __
+  -float ndegree
+  -float edegree
+}
+
+class Customer {
+  .. Constructor ..
+  (password, position)
+
+  .. Getter ..
+  + getPosition() : coordinate
+  + getBalance() : float
+
+  .. Setter ..
+  + setPosition(coordinate)
+  + setBalance(creditedeuros)
+
+  .. Methods ..
+  + returnNearestScooter() : Scooter
+  + useScooter(Scooter) : void
+  + getIsLoggedIn() : isloggedin
+  + endDrive() : void
+  + reportScooterDamaged(Scooter) : void
+  + logIn(string) : void
+  + logOut() : void
+  + changePassword(string) : void
+
+  __ private data __
+  -String password
+  -float creditedeuros
+  -Coordinate position
+  -bool isloggedin
+  -Scooter usingScooter
+}
+
+class ScooterHunter {
+  .. Constructor ..
+  (password, area)
+
+  .. Getter ..
+  + getActiveInArea() : Area
+
+  .. Setter ..
+  + setActiveInArea(Area) : void
+
+  .. Methods ..
+  + returnMostEmptyScooterHotspot() : ScooterHotspot
+  + printScootersLowOnBattery() : void
+  + returnNearestScooterLowOnBattery() : Scooter
+  + calcBalanceForCharging(int) : float
+  + chargeScooter(Scooter) : void
+  + bringBackScooterToHotspot(Scooter, ScooterHotspot) : void
+  + cashOut(float): void
+
+  __ private data __
+  - Area activeInArea
+}
+
+class Admin {
+  .. Constructor ..
+  (password)
+
+  .. Methods ..
+  + printAllScooters() : void
+  + printScootersReportedAsDamaged() : void
+  + returnDamagedScooter() : Scooter
+  + sendScooterToMaintenanceDepartment(Scooter,MaintenanceDepartment) : boolean
+}
+
+class MaintenanceDepartment {
+  .. Constructor ..
+  (departmentname, location, scootercapacity)
+
+  .. Getter ..
+  + getLocation() : coordinate
+  + getScooterCapacity() int
+  + getScooterArray() : Scooter[]
+
+  .. Methods ..
+  + repairScooter(Scooter) : void
+  + checkOutScooter(Scooter) : void
+  + receiveScooter(Scooter) : bool
+
+  __ public data __
+  -LinkedList<Scooter> maintenancedepartmentscooterlist
+
+  __ private data __
+  -String departmentname
+  -Coordinate location
+  -int scootercapacity
+
+}
+
+class ScooterHotspot {
+  .. Constructor ..
+  (hotspotname, location, maxscootercount, scootercount, registeredarea)
+
+  .. Getter ..
+  + getHotSpotName() : string
+  + getLocation() : coordinate
+  + getMaxScooterCount() : int
+  + getScooterCount() : int
+  + getRegisteredArea() : registeredarea
+
+  .. Setter ..
+  + setHotSpotName(string) : void
+  + setLocation(coordinate) : void
+  + setMaxScooterCount(int) : void
+  + setScooterCount(int) : void
+  + setRegisteredArea(Area) : void
+
+  __ public data __
+  -LinkedList<Scooter> scooterhotspotlist
+
+  __ private data __
+  -String hotspotname
+  -Coordinate location
+  -Area registeredarea
+  -int maxscootercount
+  -int scootercount
+}
+
+enum Status {
+  + ready
+  + lowonbattery
+  + inuse
+  + charging
+  + damaged
+  + maintenance
+}
+
+Admin --|> Customer
+ScooterHunter --|> Customer
+Scooter - Status
+Scooter -- Coordinate
+Scooter -- Area
+MaintenanceDepartment -- Coordinate
+ScooterHotspot -- Coordinate
+Customer -- Coordinate
+
+
+@enduml
+
