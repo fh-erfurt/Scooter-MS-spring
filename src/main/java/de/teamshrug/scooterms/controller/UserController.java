@@ -1,15 +1,17 @@
 package de.teamshrug.scooterms.controller;
 
 import de.teamshrug.scooterms.config.JwtTokenUtil;
+import de.teamshrug.scooterms.model.RentalHistory;
 import de.teamshrug.scooterms.model.UserDao;
+import de.teamshrug.scooterms.repository.RentalRepository;
 import de.teamshrug.scooterms.repository.UserRepository;
-import io.jsonwebtoken.ExpiredJwtException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Transactional
 @RestController
@@ -17,20 +19,37 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserController  {
 
     private final UserRepository userRepository;
+    private final RentalRepository rentalRepository;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    private JwtTokenUtil jwtTokenUtil;
+
+    public UserDao getUserFromAuthorizationHeader(@NotNull String requestTokenHeader) {
+        String jwtToken = requestTokenHeader.substring(7);
+        String extractedemail = jwtTokenUtil.getUsernameFromToken(jwtToken);
+        return userRepository.findByEmail(extractedemail);
     }
-    /*
-    @GetMapping(path = "/{id}")
-    ResponseEntity<Account> findById(@PathVariable(value = "id") Long id) throws AccountNotFoundException {
+
+    @Autowired
+    public UserController(UserRepository userRepository, RentalRepository rentalRepository) {
+        this.userRepository = userRepository;
+        this.rentalRepository = rentalRepository;
+    }
+
+    @GetMapping(path = "/myaccount")
+    ResponseEntity<UserDao> showRentalHistory(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
+        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping(path = "/myhistory")
+    ResponseEntity<List<RentalHistory>> findByJWT(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
+        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+
         return ResponseEntity.ok(
-                this.accountRepository
-                        .findById(id)
-                        .orElseThrow(() -> new AccountNotFoundException("No Account with this id: " + id))
+                rentalRepository.findAllByUser(user)
         );
-    }*/
+    }
 
     /*
     @GetMapping()
@@ -70,25 +89,15 @@ public class UserController  {
         );
     }*/
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    @DeleteMapping(path = "/deleteaccount")
+    void deleteAccount(@RequestHeader(value="Authorization") String requestTokenHeader) {
+        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
 
-    @DeleteMapping()
-    void deleteAccount(@RequestParam(value = "email") String email, @RequestHeader(value="Authorization") String requestTokenHeader) {
-
-        //final String requestTokenHeader = request.getHeader("Authorization");
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            String jwtToken = requestTokenHeader.substring(7);
-            String extractedemail = jwtTokenUtil.getUsernameFromToken(jwtToken);
-
-            if (extractedemail.equals(email)) {
-                this.userRepository.deleteByEmail(email);
-            }
-            else {
-                throw new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED
-                );
-            }
+        try {
+            this.userRepository.deleteByEmail(user.getEmail());
+        }
+        catch(Exception e) {
+            System.out.println(e);
         }
     }
 }

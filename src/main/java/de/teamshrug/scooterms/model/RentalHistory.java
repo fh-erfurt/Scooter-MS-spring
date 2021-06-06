@@ -1,6 +1,7 @@
 package de.teamshrug.scooterms.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
@@ -28,11 +29,12 @@ public class RentalHistory {
 
     private  long end_timestamp;
 
-
-    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Scooter scooter;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private UserDao user;
 
 }

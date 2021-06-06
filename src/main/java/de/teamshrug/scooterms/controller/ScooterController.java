@@ -47,17 +47,17 @@ public class ScooterController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping(path = "/{id}")
+    /*@GetMapping(path = "/{id}")
     ResponseEntity<Scooter> findById(@PathVariable(value = "id") Long id) throws ScooterNotFoundException {
         return ResponseEntity.ok(
                 this.scooterRepository
                         .findById(id)
                         .orElseThrow(() -> new ScooterNotFoundException("No Scooter with this id: " + id))
         );
-    }
+    }*/
 
     @GetMapping()
-    ResponseEntity<List<Scooter>> findAll(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) throws ScooterNotFoundException {
+    ResponseEntity<List<Scooter>> findScooters(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) throws ScooterNotFoundException {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
 
         if (!user.isScooterHunter() && !user.isAdmin())
@@ -115,8 +115,8 @@ public class ScooterController {
         }
     }*/
 
-    @GetMapping(path = "/{id}/rent")
-    ResponseEntity<Long> save(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
+    @GetMapping(path = "/rent/{id}")
+    ResponseEntity<Long> rentScooter(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
         if (scooterRepository.existsById(id) && scooterRepository.getById(id).getStatus().equals("ready")) {
             try {
                 UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
@@ -167,9 +167,9 @@ public class ScooterController {
             );
         }
     }
-    //@PathVariable Long id,
+
     @PostMapping(path = "/park")
-    ResponseEntity<String> update(@RequestHeader(value="Authorization") String requestTokenHeader, @RequestBody PositionDto pos) {
+    ResponseEntity<String> parkScooter(@RequestHeader(value="Authorization") String requestTokenHeader, @RequestBody PositionDto pos) {
         try {
             UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
             long timestamp = Instant.now().getEpochSecond();
