@@ -26,8 +26,9 @@ public class UserDao {
     private  String password;
 
     private  BigDecimal creditedEuros;
-    private  boolean isAdmin;
-    private  boolean isScooterHunter;
 
+    private  boolean isAdmin;
+
+    private  boolean isScooterHunter;
 }
 

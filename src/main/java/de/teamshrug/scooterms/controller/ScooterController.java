@@ -10,6 +10,7 @@ import de.teamshrug.scooterms.repository.RentalRepository;
 import de.teamshrug.scooterms.repository.ScooterRepository;
 import de.teamshrug.scooterms.repository.UserRepository;
 import de.teamshrug.scooterms.tools.Haversine;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,12 @@ public class ScooterController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
+    public UserDao getUserFromAuthorizationHeader(@NotNull String requestTokenHeader) {
+        String jwtToken = requestTokenHeader.substring(7);
+        String extractedemail = jwtTokenUtil.getUsernameFromToken(jwtToken);
+        return userRepository.findByEmail(extractedemail);
+    }
+
     @Autowired
     public ScooterController(ScooterRepository scooterRepository, RentalRepository rentalRepository, UserRepository userRepository) {
         this.scooterRepository = scooterRepository;
@@ -50,11 +57,29 @@ public class ScooterController {
     }
 
     @GetMapping()
-    ResponseEntity<List<Scooter>> findAll() throws ScooterNotFoundException {
-        return ResponseEntity.ok(
-                this.scooterRepository
-                        .findAll()
-        );
+    ResponseEntity<List<Scooter>> findAll(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) throws ScooterNotFoundException {
+        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+
+        if (!user.isScooterHunter() && !user.isAdmin())
+        {
+            return ResponseEntity.ok(
+                    this.scooterRepository
+                            .findAllReady()
+            );
+        }
+        if (user.isScooterHunter() && !user.isAdmin())
+        {
+            return ResponseEntity.ok(
+                    this.scooterRepository
+                            .findAllReadyAndLowonbattery()
+            );
+        }
+        else {
+            return ResponseEntity.ok(
+                    this.scooterRepository
+                            .findAll()
+            );
+        }
     }
 
     /*@GetMapping(path = "/{id}/rent")
@@ -94,9 +119,7 @@ public class ScooterController {
     ResponseEntity<Long> save(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
         if (scooterRepository.existsById(id) && scooterRepository.getById(id).getStatus().equals("ready")) {
             try {
-                String jwtToken = requestTokenHeader.substring(7);
-                String extractedemail = jwtTokenUtil.getUsernameFromToken(jwtToken);
-                UserDao user = userRepository.findByEmail(extractedemail);
+                UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
                 long timestamp = Instant.now().getEpochSecond();
 
                 RentalHistory rentalentity = new RentalHistory();
@@ -144,85 +167,72 @@ public class ScooterController {
             );
         }
     }
+    //@PathVariable Long id,
+    @PostMapping(path = "/park")
+    ResponseEntity<String> update(@RequestHeader(value="Authorization") String requestTokenHeader, @RequestBody PositionDto pos) {
+        try {
+            UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+            long timestamp = Instant.now().getEpochSecond();
 
+            List<RentalHistory> rentallist = rentalRepository.findAllByUser(user);
+            RentalHistory rentalentity = null;
 
-
-    @PostMapping(path = "/{id}/park")
-    ResponseEntity<String> update(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader, @RequestBody PositionDto pos) {
-        if (scooterRepository.existsById(id) && scooterRepository.getById(id).getStatus().equals("inuse")) {
-            Scooter scooter = scooterRepository.getById(id);
-            try {
-                String jwtToken = requestTokenHeader.substring(7);
-                String extractedemail = jwtTokenUtil.getUsernameFromToken(jwtToken);
-                UserDao user = userRepository.findByEmail(extractedemail);
-                long timestamp = Instant.now().getEpochSecond();
-
-                List<RentalHistory> rentallist = rentalRepository.findAllByUser(user);
-                //RentalHistory rentalentity = rentallist.get(0);
-                RentalHistory rentalentity = null;
-
-                for (RentalHistory rentalentry : rentallist) {
-                    if (rentalentry.getStart_timestamp() == rentalentry.getEnd_timestamp()) {
-                        rentalentity = rentalentry;
-                        break;
-                    }
+            for (RentalHistory rentalentry : rentallist) {
+                if (rentalentry.getStart_timestamp() == rentalentry.getEnd_timestamp()) {
+                    rentalentity = rentalentry;
+                    break;
                 }
+            }
 
-                assert rentalentity != null;
-                if (rentalentity.getStart_timestamp() == rentalentity.getEnd_timestamp() && rentalentity.getScooter().equals(scooter) && scooter.isInRegisteredArea() )
+            assert rentalentity != null;
+
+            Scooter scooter = rentalentity.getScooter();
+
+            if (rentalentity.getStart_timestamp() == rentalentity.getEnd_timestamp() && rentalentity.getScooter().equals(scooter) && scooter.isInRegisteredArea() )
+            {
+                rentalentity.setEnd_timestamp(timestamp);
+                rentalRepository.save(rentalentity);
+
+                double kmdriven = Haversine.distance(pos.getLatitude(), pos.getLongitude(), scooter.getNdegree().doubleValue(), scooter.getEdegree().doubleValue());
+                double mdriven = kmdriven*1000;
+
+
+                scooter.setBattery(scooter.getBattery() - (int)(mdriven*0.005));
+                user.setCreditedEuros((user.getCreditedEuros().subtract(new BigDecimal(kmdriven))).setScale(2, RoundingMode.HALF_UP));
+
+                scooter.setNdegree(BigDecimal.valueOf(pos.getLatitude()));
+                scooter.setEdegree(BigDecimal.valueOf(pos.getLongitude()));
+
+                if (scooter.getBattery() >= 20)
                 {
-                    rentalentity.setEnd_timestamp(timestamp);
-                    rentalRepository.save(rentalentity);
-
-                    double kmdriven = Haversine.distance(pos.getLatitude(), pos.getLongitude(), scooter.getNdegree().doubleValue(), scooter.getEdegree().doubleValue());
-                    double mdriven = kmdriven*1000;
-
-
-                    scooter.setBattery(scooter.getBattery() - (int)(mdriven*0.005));
-                    user.setCreditedEuros((user.getCreditedEuros().subtract(new BigDecimal(kmdriven))).setScale(2, RoundingMode.HALF_UP));
-
-                    scooter.setNdegree(BigDecimal.valueOf(pos.getLatitude()));
-                    scooter.setEdegree(BigDecimal.valueOf(pos.getLongitude()));
-
-                    if (scooter.getBattery() >= 20)
-                    {
-                        scooter.setStatus("ready");
-                    }
-                    else
-                    {
-                        scooter.setStatus("lowonbattery");
-                    }
-
-                    userRepository.save(user);
-                    scooterRepository.save(scooter);
-                    return new ResponseEntity<>(
-                            HttpStatus.OK
-                    );
-
+                    scooter.setStatus("ready");
                 }
-                else {
-                    return new ResponseEntity<>(
-                            HttpStatus.NOT_ACCEPTABLE
-                    );
+                else
+                {
+                    scooter.setStatus("lowonbattery");
                 }
+
+                userRepository.save(user);
+                scooterRepository.save(scooter);
+                return new ResponseEntity<>(
+                        HttpStatus.OK
+                );
 
             }
-            catch(Exception e)
-            {
+            else {
                 return new ResponseEntity<>(
-                        HttpStatus.BAD_REQUEST
+                        HttpStatus.NOT_ACCEPTABLE
                 );
             }
+
         }
-        else {
+        catch(Exception e)
+        {
             return new ResponseEntity<>(
                     HttpStatus.BAD_REQUEST
             );
         }
     }
-
-
-
 
     /*@PostMapping(consumes = "application/json", produces = "application/json")
     ResponseEntity<Account> save(@RequestBody Account account) {
@@ -239,5 +249,4 @@ public class ScooterController {
                         .orElseThrow(() -> new ScooterNotFoundException("No Scooter with this id: " + id))
         );
     }*/
-
 }
