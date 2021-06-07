@@ -85,7 +85,7 @@ mvn clean -f pom.xml
 ### Admin
 <img src="https://raw.githubusercontent.com/fh-erfurt/Scooter-MS/main/assets/Admin.png" alt="PlantUML" width="800"/>
 <br />
-<br />2
+<br />
 <br />
 
 ## Credits
