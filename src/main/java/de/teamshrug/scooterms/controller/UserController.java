@@ -51,42 +51,10 @@ public class UserController  {
         );
     }
 
-    /*
-    @GetMapping()
-    ResponseEntity<Account> findByeMail(
-            @RequestParam(value = "email") String email
-            ,@RequestParam(value = "pw") String passwordhash
-    ) throws AccountNotFoundException {
-        return ResponseEntity.ok(
-                this.userRepository
-                        //.findByeMail(email)
-                        .findByeMailAndPasswordHash(email, passwordhash)
-                        .orElseThrow(() -> new AccountNotFoundException("Email or password not accepted."))
-        );
-    }*/
-
-    /*@PostMapping(consumes = "application/json", produces = "application/json")
-    ResponseEntity<Account> save(@RequestBody Account account) {
-        return ResponseEntity.ok(this.userRepository.save(account));
-    }*/
-
-    @PutMapping(consumes = "application/json", produces = "application/json")
+    /*@PutMapping(consumes = "application/json", produces = "application/json")
     ResponseEntity<UserDao> update(@RequestBody UserDao user) {
+        System.out.println("register save...");
         return ResponseEntity.ok(this.userRepository.save(user));
-    }
-
-    /*@DeleteMapping("/{id}")
-    void deleteAccount(@PathVariable(value = "id") Long id) {
-        this.userRepository.deleteById(id);
-    }*/
-
-    /*@GetMapping()
-    ResponseEntity<Account> findByeMail(@RequestParam(value = "email") String email) throws AccountNotFoundException {
-        return ResponseEntity.ok(
-                this.accountRepository
-                        .findByeMail(email)
-                        .orElseThrow(() -> new AccountNotFoundException("No Account with this email: " + email))
-        );
     }*/
 
     @DeleteMapping(path = "/deleteaccount")

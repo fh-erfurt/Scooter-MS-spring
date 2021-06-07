@@ -47,15 +47,6 @@ public class ScooterController {
         this.userRepository = userRepository;
     }
 
-    /*@GetMapping(path = "/{id}")
-    ResponseEntity<Scooter> findById(@PathVariable(value = "id") Long id) throws ScooterNotFoundException {
-        return ResponseEntity.ok(
-                this.scooterRepository
-                        .findById(id)
-                        .orElseThrow(() -> new ScooterNotFoundException("No Scooter with this id: " + id))
-        );
-    }*/
-
     @GetMapping()
     ResponseEntity<List<Scooter>> findScooters(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) throws ScooterNotFoundException {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
@@ -81,39 +72,6 @@ public class ScooterController {
             );
         }
     }
-
-    /*@GetMapping(path = "/{id}/rent")
-    ResponseEntity<RentalHistory> save(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
-        if (scooterRepository.existsById(id) && scooterRepository.getById(id).getStatus().equals("ready")) {
-
-            if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-                String jwtToken = requestTokenHeader.substring(7);
-                String extractedemail = jwtTokenUtil.getUsernameFromToken(jwtToken);
-                Long userid = userRepository.findByEmail(extractedemail).getId();
-                Long timestamp = Instant.now().getEpochSecond();
-
-                RentalHistory rentalentity = new RentalHistory(timestamp, timestamp, scooterRepository.getById(id), userRepository.getById(userid));
-
-                this.scooterRepository.getById(id).setStatus("inuse");
-
-                return ResponseEntity.ok(
-                        this.rentalRepository
-                                .save(rentalentity)
-                );
-
-            }
-            else {
-                return new ResponseEntity<>(
-                        HttpStatus.BAD_REQUEST
-                );
-            }
-        }
-        else {
-            return new ResponseEntity<>(
-                    HttpStatus.BAD_REQUEST
-            );
-        }
-    }*/
 
     @GetMapping(path = "/rent/{id}")
     ResponseEntity<Long> rentScooter(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
@@ -233,20 +191,4 @@ public class ScooterController {
             );
         }
     }
-
-    /*@PostMapping(consumes = "application/json", produces = "application/json")
-    ResponseEntity<Account> save(@RequestBody Account account) {
-        return ResponseEntity.ok(this.accountRepository.save(account));
-    }*/
-
-    //.orElseThrow(() -> new ScooterNotFoundException("No Scooter with this id: " + id))
-    /*
-    @PostMapping(path = "{id}/rent")
-    ResponseEntity<Scooter> findById(@PathVariable(value = "id") Long id) throws ScooterNotFoundException {
-        return ResponseEntity.ok(
-                this.scooterRepository
-                        .findById(id)
-                        .orElseThrow(() -> new ScooterNotFoundException("No Scooter with this id: " + id))
-        );
-    }*/
 }

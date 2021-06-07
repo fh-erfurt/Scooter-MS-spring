@@ -105,11 +105,4 @@ public class Scooter {
         return area.isInArea(new BigDecimal(String.valueOf(getNdegree())), new BigDecimal(String.valueOf(getEdegree())));
     }
 
-    public int meterdriven(double ndestination, double edestination) {
-        float kmdriven = (float) Haversine.distance(ndegree.doubleValue(),edegree.doubleValue(),ndestination,edestination);
-
-        float roundkmdistance = (float)(Math.round(kmdriven * 100.0) / 100.0);      // like this 4.11  rounds kmdriven to 2 decimal places
-        return (int)(kmdriven*1000);
-    }
-
 }
