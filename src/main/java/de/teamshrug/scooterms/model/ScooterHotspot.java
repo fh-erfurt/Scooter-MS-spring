@@ -1,6 +1,7 @@
 package de.teamshrug.scooterms.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class ScooterHotspot {
     @Column(columnDefinition = "decimal(8,6)")
     private  BigDecimal edegree;
 
-
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     private Area area;
 }
