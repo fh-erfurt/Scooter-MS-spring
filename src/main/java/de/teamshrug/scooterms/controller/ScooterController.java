@@ -155,7 +155,7 @@ public class ScooterController {
                 double mdriven = kmdriven*1000;
 
 
-                scooter.setBattery(scooter.getBattery() - (int)(mdriven*0.005));
+                scooter.setBattery(scooter.getBattery() - (int)(mdriven*0.003));
                 user.setCreditedEuros((user.getCreditedEuros().subtract(new BigDecimal(kmdriven))).setScale(2, RoundingMode.HALF_UP));
 
                 scooter.setNdegree(BigDecimal.valueOf(pos.getLatitude()));

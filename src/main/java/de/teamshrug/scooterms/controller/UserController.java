@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Transactional
@@ -37,13 +38,23 @@ public class UserController  {
     }
 
     @GetMapping(path = "/myaccount")
-    ResponseEntity<UserDao> showRentalHistory(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
+    ResponseEntity<UserDao> showAccountInfo(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping(path = "/myaccount/topup/{amount}")
+    ResponseEntity<String> topUpBalance(@PathVariable int amount,@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
+        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+       BigDecimal credits = user.getCreditedEuros();
+       credits = credits.add(BigDecimal.valueOf(amount));
+       user.setCreditedEuros(credits);
+       userRepository.save(user);
+       return ResponseEntity.ok("Top Up Credits");
+    }
+
     @GetMapping(path = "/myhistory")
-    ResponseEntity<List<RentalHistory>> findByJWT(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
+    ResponseEntity<List<RentalHistory>> showRentalHistory(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
 
         return ResponseEntity.ok(
