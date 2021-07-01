@@ -31,4 +31,10 @@ public interface ScooterRepository extends JpaRepository<Scooter, Long> {
         return allScooters;
     };
 
+    default List<Scooter> findAllReadyAndLowonbatteryAndDamaged() {
+        List<Scooter> allScooters = findAll();
+
+        allScooters.removeIf(scooter -> (!scooter.getStatus().equals("ready")) && (!scooter.getStatus().equals("lowonbattery")) && (!scooter.getStatus().equals("damaged")));
+        return allScooters;
+    };
 }

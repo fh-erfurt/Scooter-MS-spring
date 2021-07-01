@@ -1,14 +1,9 @@
 package de.teamshrug.scooterms.controller;
 
 import de.teamshrug.scooterms.config.JwtTokenUtil;
-import de.teamshrug.scooterms.model.PositionDto;
-import de.teamshrug.scooterms.model.RentalHistory;
-import de.teamshrug.scooterms.model.Scooter;
-import de.teamshrug.scooterms.model.UserDao;
+import de.teamshrug.scooterms.model.*;
 import de.teamshrug.scooterms.model.errors.ScooterNotFoundException;
-import de.teamshrug.scooterms.repository.RentalRepository;
-import de.teamshrug.scooterms.repository.ScooterRepository;
-import de.teamshrug.scooterms.repository.UserRepository;
+import de.teamshrug.scooterms.repository.*;
 import de.teamshrug.scooterms.tools.Haversine;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +25,8 @@ public class ScooterController {
     private final ScooterRepository scooterRepository;
     private final RentalRepository rentalRepository;
     private final UserRepository userRepository;
+    private final ScooterHotspotRepository scooterHotspotRepository;
+    private final MaintenanceDepartmentRepository maintenanceDepartmentRepository;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -41,10 +38,12 @@ public class ScooterController {
     }
 
     @Autowired
-    public ScooterController(ScooterRepository scooterRepository, RentalRepository rentalRepository, UserRepository userRepository) {
+    public ScooterController(ScooterRepository scooterRepository, RentalRepository rentalRepository, UserRepository userRepository, ScooterHotspotRepository scooterHotspotRepository, MaintenanceDepartmentRepository maintenanceDepartmentRepository) {
         this.scooterRepository = scooterRepository;
         this.rentalRepository = rentalRepository;
         this.userRepository = userRepository;
+        this.scooterHotspotRepository = scooterHotspotRepository;
+        this.maintenanceDepartmentRepository = maintenanceDepartmentRepository;
     }
 
     @GetMapping()
@@ -68,7 +67,7 @@ public class ScooterController {
         else {
             return ResponseEntity.ok(
                     this.scooterRepository
-                            .findAll()
+                            .findAllReadyAndLowonbatteryAndDamaged()
             );
         }
     }
@@ -186,6 +185,82 @@ public class ScooterController {
         }
         catch(Exception e)
         {
+            return new ResponseEntity<>(
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+
+    @GetMapping(path = "/charge/{id}")
+    ResponseEntity<Double> fullyChargeAndReturnScooter(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
+        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+        if (scooterRepository.existsById(id) && scooterRepository.getById(id).getStatus().equals("lowonbattery")) {
+            try {
+                Scooter scooter = this.scooterRepository.getById(id);
+                BigDecimal usercredits = user.getCreditedEuros();
+                int scooterbattery = scooter.getBattery();
+                int chargepercents = 100 - scooterbattery;
+                List<ScooterHotspot> scooterHotspots = scooterHotspotRepository.findAll();
+                ScooterHotspot scooterHotspotReturn = user.returnNearestScooterHotspot(scooter, scooterHotspots);
+                scooter.setNdegree(scooter.returnNearCoordinate(scooterHotspotReturn.getNdegree()));
+                scooter.setEdegree(scooter.returnNearCoordinate(scooterHotspotReturn.getEdegree()));
+                scooter.setStatus("charging");
+                scooter.setBattery(100);
+                scooter.setStatus("ready");
+                double addedcredits = chargepercents/100.0;
+                user.setCreditedEuros(usercredits.add(BigDecimal.valueOf(addedcredits)));
+
+                userRepository.save(user);
+                scooterRepository.save(scooter);
+
+                return new ResponseEntity<>(
+                        addedcredits, HttpStatus.OK
+                );
+            }
+            catch(Exception e)
+            {
+                return new ResponseEntity<>(
+                        HttpStatus.BAD_REQUEST
+                );
+            }
+        }
+        else {
+            return new ResponseEntity<>(
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+
+    @GetMapping(path = "/repair/{id}")
+    ResponseEntity<String> bringScooterToMaintenanceDepartment(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
+        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+        if (scooterRepository.existsById(id) && scooterRepository.getById(id).getStatus().equals("damaged")) {
+            try {
+                Scooter scooter = this.scooterRepository.getById(id);
+                List<MaintenanceDepartment> maintenanceDepartments = maintenanceDepartmentRepository.findAll();
+                MaintenanceDepartment maintenanceDepartmentReturn = user.returnNearestMaintenanceDepartment(scooter, maintenanceDepartments);
+                scooter.setNdegree(maintenanceDepartmentReturn.getNdegree());
+                scooter.setEdegree(maintenanceDepartmentReturn.getEdegree());
+                scooter.setStatus("maintenance");
+                int scooterUsage = maintenanceDepartmentReturn.getScootercapacity();
+                scooterUsage++;
+                maintenanceDepartmentReturn.setScootercapacity(scooterUsage);
+
+                maintenanceDepartmentRepository.save(maintenanceDepartmentReturn);
+                scooterRepository.save(scooter);
+
+                return new ResponseEntity<>(
+                        HttpStatus.OK
+                );
+            }
+            catch(Exception e)
+            {
+                return new ResponseEntity<>(
+                        HttpStatus.BAD_REQUEST
+                );
+            }
+        }
+        else {
             return new ResponseEntity<>(
                     HttpStatus.BAD_REQUEST
             );

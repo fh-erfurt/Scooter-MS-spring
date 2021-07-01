@@ -105,4 +105,14 @@ public class Scooter {
         return area.isInArea(new BigDecimal(String.valueOf(getNdegree())), new BigDecimal(String.valueOf(getEdegree())));
     }
 
+    public static BigDecimal generateRandomBigDecimalFromRange(BigDecimal min, BigDecimal max) {
+        BigDecimal randomBigDecimal = min.add(BigDecimal.valueOf(Math.random()).multiply(max.subtract(min)));
+        return randomBigDecimal.setScale(6, BigDecimal.ROUND_HALF_UP);
+    }
+
+    public BigDecimal returnNearCoordinate(BigDecimal input) {
+        BigDecimal adder = generateRandomBigDecimalFromRange( new BigDecimal("-0.001"), new BigDecimal("0.001"));
+        return adder.add(input);
+    }
+
 }

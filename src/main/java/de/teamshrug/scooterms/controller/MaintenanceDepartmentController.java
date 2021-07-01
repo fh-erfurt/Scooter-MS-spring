@@ -2,11 +2,11 @@ package de.teamshrug.scooterms.controller;
 
 import de.teamshrug.scooterms.config.JwtTokenUtil;
 import de.teamshrug.scooterms.model.MaintenanceDepartment;
-import de.teamshrug.scooterms.model.ScooterHotspot;
+import de.teamshrug.scooterms.model.Scooter;
 import de.teamshrug.scooterms.model.UserDao;
 import de.teamshrug.scooterms.model.errors.MaintenanceDepartmentNotFoundException;
-import de.teamshrug.scooterms.model.errors.ScooterNotFoundException;
 import de.teamshrug.scooterms.repository.MaintenanceDepartmentRepository;
+import de.teamshrug.scooterms.repository.ScooterRepository;
 import de.teamshrug.scooterms.repository.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 
 @Transactional
@@ -25,6 +28,13 @@ public class MaintenanceDepartmentController {
 
     private final MaintenanceDepartmentRepository maintenancedepartmentRepository;
     private final UserRepository userRepository;
+    private final ScooterRepository scooterRepository;
+
+    @Autowired
+    public static BigDecimal generateRandomBigDecimalFromRange(BigDecimal min, BigDecimal max) {
+        BigDecimal randomBigDecimal = min.add(BigDecimal.valueOf(Math.random()).multiply(max.subtract(min)));
+        return randomBigDecimal.setScale(6, BigDecimal.ROUND_HALF_UP);
+    }
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -36,9 +46,10 @@ public class MaintenanceDepartmentController {
     }
 
     @Autowired
-    public MaintenanceDepartmentController(MaintenanceDepartmentRepository maintenancedepartmentRepository, UserRepository userRepository) {
+    public MaintenanceDepartmentController(MaintenanceDepartmentRepository maintenancedepartmentRepository, UserRepository userRepository, ScooterRepository scooterRepository) {
         this.maintenancedepartmentRepository = maintenancedepartmentRepository;
         this.userRepository = userRepository;
+        this.scooterRepository = scooterRepository;
     }
 
     @GetMapping()
@@ -61,5 +72,54 @@ public class MaintenanceDepartmentController {
                         .findById(id)
                         .orElseThrow(() -> new MaintenanceDepartmentNotFoundException("No Maintenancedepartment with this id: " + id))
         );
+    }
+
+    @GetMapping(path = "/releasescooter/{id}")
+    ResponseEntity<String> releaseOneScooter(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) throws MaintenanceDepartmentNotFoundException {
+        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+        if (maintenancedepartmentRepository.existsById(id)) {
+            try {
+                MaintenanceDepartment department = this.maintenancedepartmentRepository.getById(id);
+                List<Scooter> scooters = scooterRepository.findAll();
+                Scooter scooter = null;
+
+                for (Scooter scoo : scooters)  {
+                    if (scoo.getNdegree().equals(department.getNdegree()) && scoo.getEdegree().equals(department.getEdegree())) {
+                        department.setScootercapacity(department.getScootercapacity() - 1);
+                        scooter = scoo;
+                    }
+                }
+
+                if (scooter != null) {
+                    BigDecimal newScooterNdegree = scooter.returnNearCoordinate(department.getNdegree());
+                    BigDecimal newScooterEdegree = scooter.returnNearCoordinate(department.getEdegree());
+                    scooter.setNdegree(newScooterNdegree);
+                    scooter.setEdegree(newScooterEdegree);
+                    scooter.setStatus("ready");
+
+                    scooterRepository.save(scooter);
+                    maintenancedepartmentRepository.save(department);
+
+                    return new ResponseEntity<>(
+                            HttpStatus.OK
+                    );
+                }
+
+                return new ResponseEntity<>(
+                        HttpStatus.BAD_REQUEST
+                );
+            }
+            catch(Exception e)
+            {
+                return new ResponseEntity<>(
+                        HttpStatus.BAD_REQUEST
+                );
+            }
+        }
+        else {
+            return new ResponseEntity<>(
+                    HttpStatus.BAD_REQUEST
+            );
+        }
     }
 }

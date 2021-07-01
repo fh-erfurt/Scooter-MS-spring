@@ -45,7 +45,7 @@ public class UserController  {
 
     @GetMapping(path = "/myaccount/topup/{amount}")
     ResponseEntity<String> topUpBalance(@PathVariable int amount,@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
-        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
+       UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
        BigDecimal credits = user.getCreditedEuros();
        credits = credits.add(BigDecimal.valueOf(amount));
        user.setCreditedEuros(credits);
