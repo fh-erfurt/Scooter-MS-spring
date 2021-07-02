@@ -34,6 +34,10 @@ public class UserDao {
 
     private  boolean isScooterHunter;
 
+    public UserDao() {
+        this.creditedEuros = new BigDecimal("0");
+    }
+
     public ScooterHotspot returnNearestScooterHotspot(Scooter scooter, List<ScooterHotspot> scooterhotspotlist) {
         ScooterHotspot nearestScooterHotspot = null;
         double distance = Double.MAX_VALUE;
