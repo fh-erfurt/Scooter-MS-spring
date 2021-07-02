@@ -16,5 +16,5 @@ INSERT INTO scooterhotspot(name, maxscootercount, scootercount, ndegree, edegree
 INSERT INTO maintenancedepartment(name, maxscootercapacity, scootercapacity, ndegree, edegree, area_id) VALUES ('Leipziger Straße', 5, 0, 50.994634, 11.042946, 1);
 
 INSERT INTO user(email, password, is_admin, is_scooter_hunter, credited_euros) VALUES ('testmail1@gmail.com', '$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2', false, false, '10.39');
-INSERT INTO user(email, password, is_admin, is_scooter_hunter, credited_euros) VALUES ('testmail2@gmail.com', '$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2', false, false, '5.12');
-INSERT INTO user(email, password, is_admin, is_scooter_hunter, credited_euros) VALUES ('testmail3@gmail.com', '$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2', false, false, '0.24');
+INSERT INTO user(email, password, is_admin, is_scooter_hunter, credited_euros) VALUES ('testmail2@gmail.com', '$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2', false, true, '5.12');
+INSERT INTO user(email, password, is_admin, is_scooter_hunter, credited_euros) VALUES ('testmail3@gmail.com', '$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2', true, false, '0.24');
