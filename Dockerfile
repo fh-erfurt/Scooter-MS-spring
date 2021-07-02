@@ -6,7 +6,7 @@ RUN mvn package -f pom.xml
 
 ENTRYPOINT ["java","-jar","/target/scooterms-spring-0.0.1-SNAPSHOT.jar","--spring.profiles.active=prod"]
 
-EXPOSE 8080
+EXPOSE 8707
 
 # Metadata
 ARG IMAGE_VERSION=unknown
