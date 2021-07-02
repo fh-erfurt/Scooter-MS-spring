@@ -42,7 +42,15 @@ public class MaintenanceDepartment {
     private  BigDecimal edegree;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Area area;
 
+    public MaintenanceDepartment(String name, int maxscootercapacity, int scootercapacity, @NotNull BigDecimal ndegree, @NotNull BigDecimal edegree, Area area) {
+        this.name = name;
+        this.maxscootercapacity = maxscootercapacity;
+        this.scootercapacity = scootercapacity;
+        this.ndegree = ndegree;
+        this.edegree = edegree;
+        this.area = area;
+    }
 }

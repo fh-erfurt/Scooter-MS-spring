@@ -40,7 +40,7 @@ public class Scooter {
     private  BigDecimal edegree;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JsonIgnore
     private Area area;
 

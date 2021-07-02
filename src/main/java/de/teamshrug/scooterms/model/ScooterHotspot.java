@@ -39,6 +39,13 @@ public class ScooterHotspot {
     private  BigDecimal edegree;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Area area;
+
+    public ScooterHotspot(String name, @NotNull BigDecimal ndegree, @NotNull BigDecimal edegree, Area area) {
+        this.name = name;
+        this.ndegree = ndegree;
+        this.edegree = edegree;
+        this.area = area;
+    }
 }

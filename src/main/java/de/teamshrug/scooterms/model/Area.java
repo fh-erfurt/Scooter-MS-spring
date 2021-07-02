@@ -57,6 +57,13 @@ public class Area {
     @OneToMany(mappedBy = "area", cascade = CascadeType.ALL)
     private Set<Scooter> scooterlist = new HashSet<>();
 
+    public Area(String name, @NotNull BigDecimal ndegree1, @NotNull BigDecimal ndegree2, @NotNull BigDecimal edegree1, @NotNull BigDecimal edegree2) {
+        this.name = name;
+        this.ndegree1 = ndegree1;
+        this.ndegree2 = ndegree2;
+        this.edegree1 = edegree1;
+        this.edegree2 = edegree2;
+    }
 
     /**
      * checks whether the transferred coordinates are in the area

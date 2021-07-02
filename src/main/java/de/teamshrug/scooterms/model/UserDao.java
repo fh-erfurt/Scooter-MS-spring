@@ -38,6 +38,14 @@ public class UserDao {
         this.creditedEuros = new BigDecimal("0");
     }
 
+    public UserDao(String email, String password, boolean isAdmin, boolean isScooterHunter) {
+        this.email = email;
+        this.password = password;
+        this.creditedEuros = new BigDecimal("0");
+        this.isAdmin = isAdmin;
+        this.isScooterHunter = isScooterHunter;
+    }
+
     public ScooterHotspot returnNearestScooterHotspot(Scooter scooter, List<ScooterHotspot> scooterhotspotlist) {
         ScooterHotspot nearestScooterHotspot = null;
         double distance = Double.MAX_VALUE;

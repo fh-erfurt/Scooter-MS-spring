@@ -11,7 +11,7 @@ INSERT INTO scooter(battery, licenseplate, status, area_id, ndegree, edegree) VA
 INSERT INTO scooter(battery, licenseplate, status, area_id, ndegree, edegree) VALUES (5, 'DKN947', 'lowonbattery', 1, '50.970868', '11.021255');
 INSERT INTO scooter(battery, licenseplate, status, area_id, ndegree, edegree) VALUES (2, 'KML486', 'lowonbattery', 1, '50.958063', '11.034833');
 
-INSERT INTO scooterhotspot(name, maxscootercount, scootercount, ndegree, edegree, area_id) VALUES ('Hanseplatz', 10, 0, 50.983801, 11.044834, 1);
+INSERT INTO scooterhotspot(name, ndegree, edegree, area_id) VALUES ('Hanseplatz', 50.983801, 11.044834, 1);
 
 INSERT INTO maintenancedepartment(name, maxscootercapacity, scootercapacity, ndegree, edegree, area_id) VALUES ('Leipziger Straße', 5, 0, 50.994634, 11.042946, 1);
 
