@@ -30,9 +30,6 @@ public class ScooterHotspot {
     @Column(unique = true, nullable = false)
     private  String name;
 
-    private  int maxscootercount;
-    private  int scootercount;
-
     @NotNull
     @Column(columnDefinition = "decimal(8,6)")
     private  BigDecimal ndegree;
