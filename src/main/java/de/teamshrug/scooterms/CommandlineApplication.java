@@ -40,9 +40,9 @@ public class CommandlineApplication implements CommandLineRunner {
             erfurt = areaRepository.findAll().get(0);
             System.out.println(erfurt.getName());
 
-            UserDao user1 = new UserDao("testmail1@gmail.com", "$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2", false, false);
-            UserDao user2 = new UserDao("testmail2@gmail.com", "$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2", false, true);
-            UserDao user3 = new UserDao("testmail3@gmail.com", "$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2", true, false);
+            UserDao user1 = new UserDao("testuser@gmail.com", "$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2", false, false);
+            UserDao user2 = new UserDao("testhunter@gmail.com", "$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2", false, true);
+            UserDao user3 = new UserDao("testadmin@gmail.com", "$2a$10$e./R50Vasc2.2TL2B6NMS.2lZ5qHLTj/eMhPJPpKpN14BOFuWyvz2", true, false);
             userRepository.save(user1);
             userRepository.save(user2);
             userRepository.save(user3);
