@@ -43,6 +43,12 @@ public class UserController  {
         return ResponseEntity.ok(user);
     }
 
+    /**
+     * top up user account
+     * @param amount top-up amount in €
+     * @param requestTokenHeader
+     * @return
+     */
     @GetMapping(path = "/myaccount/topup/{amount}")
     ResponseEntity<String> topUpBalance(@PathVariable int amount,@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
        UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
@@ -53,6 +59,11 @@ public class UserController  {
        return ResponseEntity.ok("Top Up Credits");
     }
 
+    /**
+     * returns scooter rental history
+     * @param requestTokenHeader
+     * @return
+     */
     @GetMapping(path = "/myhistory")
     ResponseEntity<List<RentalHistory>> showRentalHistory(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
@@ -62,12 +73,10 @@ public class UserController  {
         );
     }
 
-    /*@PutMapping(consumes = "application/json", produces = "application/json")
-    ResponseEntity<UserDao> update(@RequestBody UserDao user) {
-        System.out.println("register save...");
-        return ResponseEntity.ok(this.userRepository.save(user));
-    }*/
-
+    /**
+     * delete account and rental history
+     * @param requestTokenHeader
+     */
     @DeleteMapping(path = "/deleteaccount")
     void deleteAccount(@RequestHeader(value="Authorization") String requestTokenHeader) {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);

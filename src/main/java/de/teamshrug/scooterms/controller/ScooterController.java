@@ -46,6 +46,12 @@ public class ScooterController {
         this.maintenanceDepartmentRepository = maintenanceDepartmentRepository;
     }
 
+    /**
+     * returns list of scooters depending on the user role
+     * @param requestTokenHeader
+     * @return
+     * @throws ScooterNotFoundException
+     */
     @GetMapping()
     ResponseEntity<List<Scooter>> findScooters(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) throws ScooterNotFoundException {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
@@ -72,7 +78,12 @@ public class ScooterController {
         }
     }
 
-    @Transactional
+    /**
+     * Rent "ready" scooter
+     * @param id scooter id
+     * @param requestTokenHeader
+     * @return
+     */
     @GetMapping(path = "/rent/{id}")
     ResponseEntity<Long> rentScooter(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
         if (scooterRepository.existsById(id) && scooterRepository.getById(id).getStatus().equals("ready")) {
@@ -120,6 +131,12 @@ public class ScooterController {
         }
     }
 
+    /**
+     * park scooter after drive
+     * @param requestTokenHeader
+     * @param pos position to park
+     * @return
+     */
     @PostMapping(path = "/park")
     ResponseEntity<String> parkScooter(@RequestHeader(value="Authorization") String requestTokenHeader, @RequestBody PositionDto pos) {
         try {
@@ -186,6 +203,12 @@ public class ScooterController {
         }
     }
 
+    /**
+     * charge scooter and bring it to scooterhotspot
+     * @param id scooter id
+     * @param requestTokenHeader
+     * @return
+     */
     @GetMapping(path = "/charge/{id}")
     ResponseEntity<Double> fullyChargeAndReturnScooter(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
@@ -226,6 +249,12 @@ public class ScooterController {
         }
     }
 
+    /**
+     * repair scooter and bring it to maintenancedepartment
+     * @param id scooter id
+     * @param requestTokenHeader
+     * @return
+     */
     @GetMapping(path = "/repair/{id}")
     ResponseEntity<String> bringScooterToMaintenanceDepartment(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);

@@ -38,6 +38,11 @@ public class ScooterHotspotController {
         this.userRepository = userRepository;
     }
 
+    /**
+     * returns list of scooterhotspots
+     * @param requestTokenHeader
+     * @return
+     */
     @GetMapping()
     ResponseEntity<List<ScooterHotspot>> findScooterHotspots(@NotNull @RequestHeader(value="Authorization") String requestTokenHeader) {
         UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
@@ -49,6 +54,12 @@ public class ScooterHotspotController {
         }
     }
 
+    /**
+     * get one specific scooterhotspot
+     * @param id scooterhotspot id
+     * @return
+     * @throws ScooterHotspotNotFoundException
+     */
     @GetMapping(path = "/{id}")
     ResponseEntity<ScooterHotspot> findById(@PathVariable(value = "id") Long id) throws ScooterHotspotNotFoundException {
         return ResponseEntity.ok(
