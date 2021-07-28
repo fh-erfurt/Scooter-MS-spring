@@ -21,11 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(
         properties = "spring.profiles.active = test",
         classes = SpringBootJwtApplication.class)
-@AutoConfigureMockMvc
 public class AreaControllerTest {
-
-    @Autowired
-    private MockMvc mvc;
 
     @Autowired
     private AreaRepository areaRepository;
