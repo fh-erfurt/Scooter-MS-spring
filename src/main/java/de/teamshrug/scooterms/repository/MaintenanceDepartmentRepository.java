@@ -10,4 +10,6 @@ public interface MaintenanceDepartmentRepository extends JpaRepository<Maintenan
 
     @NotNull
     public Optional<MaintenanceDepartment> findById(@NotNull Long id);
+
+    public Optional<MaintenanceDepartment> findByName(String name);
 }

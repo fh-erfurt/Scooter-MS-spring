@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -29,12 +30,6 @@ public class MaintenanceDepartmentController {
     private final MaintenanceDepartmentRepository maintenancedepartmentRepository;
     private final UserRepository userRepository;
     private final ScooterRepository scooterRepository;
-
-    @Autowired
-    public static BigDecimal generateRandomBigDecimalFromRange(BigDecimal min, BigDecimal max) {
-        BigDecimal randomBigDecimal = min.add(BigDecimal.valueOf(Math.random()).multiply(max.subtract(min)));
-        return randomBigDecimal.setScale(6, BigDecimal.ROUND_HALF_UP);
-    }
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;

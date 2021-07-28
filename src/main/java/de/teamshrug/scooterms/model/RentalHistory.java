@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -37,4 +38,10 @@ public class RentalHistory {
     @ManyToOne(cascade = CascadeType.REMOVE)
     private UserDao user;
 
+    public RentalHistory(long timestamp, long timestamp1, Scooter scoo, UserDao userdao) {
+        start_timestamp = timestamp;
+        end_timestamp = timestamp1;
+        scooter = scoo;
+        user = userdao;
+    }
 }

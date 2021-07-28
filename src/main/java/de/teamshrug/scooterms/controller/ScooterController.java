@@ -72,19 +72,13 @@ public class ScooterController {
         }
     }
 
+    @Transactional
     @GetMapping(path = "/rent/{id}")
     ResponseEntity<Long> rentScooter(@PathVariable Long id, @RequestHeader(value="Authorization") String requestTokenHeader) {
         if (scooterRepository.existsById(id) && scooterRepository.getById(id).getStatus().equals("ready")) {
             try {
                 UserDao user = getUserFromAuthorizationHeader(requestTokenHeader);
                 long timestamp = Instant.now().getEpochSecond();
-
-                RentalHistory rentalentity = new RentalHistory();
-                rentalentity.setStart_timestamp(timestamp);
-                rentalentity.setEnd_timestamp(timestamp);
-                rentalentity.setUser(user);
-                rentalentity.setScooter(scooterRepository.getById(id));
-
                 List<RentalHistory> userhistory = rentalRepository.findAllByUser(user);
 
                 boolean hasactiverental = false;
@@ -96,10 +90,11 @@ public class ScooterController {
                 }
 
                 if (!hasactiverental) {
-                    this.rentalRepository.save(rentalentity);
-                    Scooter scooter = this.scooterRepository.getById(id);
+                    Scooter scooter = scooterRepository.getById(id);
                     scooter.setStatus("inuse");
-                    scooterRepository.save(scooter);
+                    Scooter scoo = scooterRepository.saveAndFlush(scooter);
+                    RentalHistory rentalentity = new RentalHistory(timestamp, timestamp, scoo, user);
+                    rentalRepository.save(rentalentity);
                     return new ResponseEntity<>(
                             timestamp,
                             HttpStatus.OK
