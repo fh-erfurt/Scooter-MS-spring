@@ -1,0 +1,8 @@
+de.teamshrug.scooterms
+de.teamshrug.scooterms.config
+de.teamshrug.scooterms.controller
+de.teamshrug.scooterms.model
+de.teamshrug.scooterms.model.errors
+de.teamshrug.scooterms.repository
+de.teamshrug.scooterms.service
+de.teamshrug.scooterms.tools
