@@ -3,25 +3,22 @@ package de.teamshrug.scooterms.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import de.teamshrug.scooterms.repository.ScooterRepository;
-import de.teamshrug.scooterms.repository.UserRepository;
-import de.teamshrug.scooterms.tools.Haversine;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 import java.util.Random;
 
 /**
- * The scooter class can be used by a customer as a vehicle until the battery is empty, the customer pays a fixed price for every minute of travel. When the battery is below 20 percent, its status changes to "lowonbattery" and can now be picked up by a scooter hunter to charge it, the scooter hunter receives a reward for his effort.
+ * The scooter class can be used by a customer as a vehicle until the battery is empty, the customer pays a fixed price for every kilometer of travel. When the battery is below 20 percent, its status changes to "lowonbattery" and can now be picked up by a scooter hunter to charge it, the scooter hunter receives a reward for his effort.
  */
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-//@AllArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Scooter {
 
@@ -111,6 +108,11 @@ public class Scooter {
         return randomBigDecimal.setScale(6, RoundingMode.HALF_UP);
     }
 
+    /**
+     *
+     * @param input Coordinate
+     * @return New Coordinate, which is near the input
+     */
     public BigDecimal returnNearCoordinate(BigDecimal input) {
         BigDecimal adder = generateRandomBigDecimalFromRange( new BigDecimal("-0.001"), new BigDecimal("0.001"));
         return adder.add(input);

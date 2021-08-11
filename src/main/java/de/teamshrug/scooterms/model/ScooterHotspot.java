@@ -10,9 +10,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
- *
- * @author Roman Raßloff
- * @version 0.0.0.0, 05/02/2021
+ * When a scooter is charged, it appears at a ScooterHotspot
  */
 @Entity
 @Getter

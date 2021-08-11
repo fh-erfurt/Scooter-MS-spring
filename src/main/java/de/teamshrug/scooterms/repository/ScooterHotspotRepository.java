@@ -10,7 +10,5 @@ public interface ScooterHotspotRepository extends JpaRepository<ScooterHotspot, 
 
     @NotNull
     public Optional<ScooterHotspot> findById(@NotNull Long id);
-
-    //public Optional<Scooter> findByAreaName(String areaname);
 }
 

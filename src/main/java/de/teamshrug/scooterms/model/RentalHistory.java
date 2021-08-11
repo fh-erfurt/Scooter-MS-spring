@@ -3,15 +3,15 @@ package de.teamshrug.scooterms.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.*;
-import org.springframework.lang.Nullable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 /**
- *
- * @author Roman Raßloff
- * @version 0.0.0.0, 05/02/2021
+ * Storing rentals with fk to scooter and user + start/end -timestamp of the rental
  */
 @Entity
 @Getter

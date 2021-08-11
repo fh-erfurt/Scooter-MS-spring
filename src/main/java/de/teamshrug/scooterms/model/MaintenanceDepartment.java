@@ -10,9 +10,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
- *
- * @author Roman Raßloff, Jonas Waldhelm
- * @version 0.0.0.0, 14/06/2021
+ * When a scooter has to be repaired, it disappears from the map and its location is set to the MaintenanceDepartment
  */
 @Entity
 @Getter

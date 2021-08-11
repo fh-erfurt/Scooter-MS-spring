@@ -2,9 +2,11 @@ package de.teamshrug.scooterms.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -12,9 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
- * @author Roman Raßloff
- * @version 0.0.0.0, 05/02/2021
+ * Each scooter is registered to an area, and has to be parked inside of the area coordinates
  */
 @Entity
 @Getter
@@ -72,9 +72,7 @@ public class Area {
      */
     public boolean isInArea(BigDecimal ndegree, BigDecimal edegree)
     {
-        //ndegree1 < ndegree && (ndegree < ndegree2)) || ((ndegree1 > ndegree) && (ndegree > ndegree2)
         if ((((ndegree.compareTo(ndegree1)) > 0) && ((ndegree2.compareTo(ndegree)) > 0)) || (((ndegree1.compareTo(ndegree)) > 0) && ((ndegree.compareTo(ndegree2)) > 0))) {
-            // ((edegree1 < _position.edegree) && (_position.edegree < edegree2)) || ((edegree1 > _position.edegree) && (_position.edegree > edegree2)) {
             if ((((edegree.compareTo(edegree1)) > 0) && (edegree2.compareTo(edegree)) > 0) || (((edegree1.compareTo(edegree)) > 0) && (edegree.compareTo(edegree2)) > 0)) {
                 return true;
             }

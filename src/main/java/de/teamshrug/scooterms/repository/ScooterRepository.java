@@ -1,7 +1,6 @@
 package de.teamshrug.scooterms.repository;
 
 
-import de.teamshrug.scooterms.model.RentalHistory;
 import de.teamshrug.scooterms.model.Scooter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;

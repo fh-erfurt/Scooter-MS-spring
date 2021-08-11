@@ -11,12 +11,13 @@
 <img src="https://raw.githubusercontent.com/fh-erfurt/Scooter-MS/main/assets/Logo.png" alt="PlantUML" width="350"/>
 </p>
 
-  <br/>
+<br/>
 
 ## Table of Contents
 
 - [About the project](#about)
-- [Gert started](#get-started)
+- [Try it out](#try-out)
+- [Get started](#get-started)
 - [Software we used](#software)
 - [Diagrams](#diagrams)
 - [Credits](#credits)
@@ -25,10 +26,13 @@
 <br />
 
 ## About
+### Java 1
+With the work done in Java 1, we started a project from scratch
+<br>[Java 1 Repository](https://github.com/fh-erfurt/Scooter-MS)
 ### About the project
 In our Scooter Management System, Areas (Type Area) can be created, where the Scooters (Type Scooter) are allowed to move.
 In the test, there is an Area Erfurt which spans between the following coordinates:
-- N50.95 <---> N51.0
+- N50.95 <---> N51.01
 - E11.00 <---> E11.06
 
 You can view the interactive scribblemap [here](https://www.scribblemaps.com/create/#/id=ScooterMapEF&lat=50.98352366&lng=11.01784203&z=13&t=custom_style)
@@ -45,16 +49,46 @@ A ScooterHunter is able to do what the Customer can do, but the ScooterHunter al
 
 <br />
 
+## Try-out
+Test project [here](https://retch.github.io/scooterms-frontend/#/)
 ## Get-started
 ### How to run
 
+Depending on the config used, there is a database required.
+Config path: src/main/resources
 
-Just one simple command is needed to run the project.</br>
-Simply run it from the root directory of the project.
+To start the project, you have to build it first.
 ```
-mvn clean -f pom.xml
+mvn package -f pom.xml
 ```
-
+Now start it
+```
+java -jar /target/scooterms-spring-0.0.1-SNAPSHOT.jar
+```
+<br>
+Test-Accounts
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Password</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>testuser@gmail.com</td>
+      <td>test</td>
+    </tr>
+    <tr>
+      <td>testhunter@gmail.com</td>
+      <td>test</td>
+    </tr>
+    <tr>
+      <td>testadmin@gmail.com</td>
+      <td>test</td>
+    </tr>
+  </tbody>
+</table>
 <br />
 
 ## Software
@@ -88,7 +122,7 @@ mvn clean -f pom.xml
 ## Credits
 ### Credits to the people whose work has advanced our project
 
-- [CloudBees](https://github.com/cloudbees) for their [PlantUML GitHub action](https://github.com/cloudbees/plantuml-github-action)
+- [Shohei Ueda](https://github.com/peaceiris) for their [GitHub Pages action](https://github.com/cloudbees/plantuml-github-action)
 - [Vincent A. Cicirello](https://github.com/cicirello) for his [javadoc-cleanup Github Action](https://github.com/cicirello/javadoc-cleanup)
 - [Stefan Zweifel](https://github.com/stefanzweifel) for his [git-auto-commit Github Action](https://github.com/stefanzweifel/git-auto-commit-action)
 - [Jason Winn](https://github.com/jasonwinn) for his [Haversine formula Java implementation](https://github.com/jasonwinn/haversine)
