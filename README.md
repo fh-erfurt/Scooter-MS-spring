@@ -17,9 +17,9 @@
 
 - [About the project](#about)
 - [Try it out](#try-out)
-- [Get started](#get started)
+- [Get started](#get-started)
 - [Documentation](#documentation)
-- [Test Data](#test data)
+- [Test Data](#test-data)
 - [Software we used](#software)
 - [Diagrams](#diagrams)
 - [Credits](#credits)
