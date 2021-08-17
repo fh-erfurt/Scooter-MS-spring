@@ -68,4 +68,5 @@ public class ScooterHotspotController {
                         .orElseThrow(() -> new ScooterHotspotNotFoundException("No Scooterhotspot with this id: " + id))
         );
     }
+
 }
